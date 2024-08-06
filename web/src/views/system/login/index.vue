@@ -5,8 +5,7 @@
 				<img :src="siteLogo" />
 				<div class="login-left-logo-text">
 					<span>{{ getSystemConfig['login.site_title'] || getThemeConfig.globalViceTitle }}</span>
-					<span class="login-left-logo-text-msg">{{
-						getSystemConfig['login.site_name'] || getThemeConfig.globalViceTitleMsg }}</span>
+					<span class="login-left-logo-text-msg">{{ getSystemConfig['login.site_name'] || getThemeConfig.globalViceTitleMsg }}</span>
 				</div>
 			</div>
 			<div class="login-left-img">
@@ -19,8 +18,7 @@
 				<span class="login-right-warp-one"></span>
 				<span class="login-right-warp-two"></span>
 				<div class="login-right-warp-mian">
-					<div class="login-right-warp-main-title">{{ getSystemConfig['login.site_title'] ||
-						getThemeConfig.globalTitle }} 欢迎您！</div>
+					<div class="login-right-warp-main-title">{{ getSystemConfig['login.site_title'] || getThemeConfig.globalTitle }} 欢迎您！</div>
 					<div class="login-right-warp-main-form">
 						<div v-if="!state.isScan">
 							<el-tabs v-model="state.tabsActiveName">
@@ -42,23 +40,6 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="login-authorization z-10">
-			<p>Copyright © {{ getSystemConfig['login.copyright'] || '2021-2024 django-vue-admin.com' }} 版权所有</p>
-			<p class="la-other">
-				<a href="https://beian.miit.gov.cn" target="_blank">{{ getSystemConfig['login.keep_record'] ||
-					'晋ICP备18005113号-3' }}</a>
-				|
-				<a :href="getSystemConfig['login.help_url'] ? getSystemConfig['login.help_url'] : 'https://django-vue-admin.com'"
-					target="_blank">帮助</a>
-				|
-				<a
-					:href="getSystemConfig['login.privacy_url'] ? getBaseURL(getSystemConfig['login.privacy_url']) : '#'">隐私</a>
-				|
-				<a
-					:href="getSystemConfig['login.clause_url'] ? getBaseURL(getSystemConfig['login.clause_url']) : '#'">条款</a>
-			</p>
-		</div>
 	</div>
 	<div v-if="siteBg">
 		<img :src="siteBg" class="fixed inset-0 z-1 w-full h-full" />
@@ -73,13 +54,13 @@ import { NextLoading } from '/@/utils/loading';
 import logoMini from '/@/assets/logo-mini.svg';
 import loginMain from '/@/assets/login-main.svg';
 import loginBg from '/@/assets/login-bg.svg';
-import { SystemConfigStore } from '/@/stores/systemConfig'
-import { getBaseURL } from "/@/utils/baseUrl";
+import { SystemConfigStore } from '/@/stores/systemConfig';
+import { getBaseURL } from '/@/utils/baseUrl';
 // 引入组件
 const Account = defineAsyncComponent(() => import('/@/views/system/login/component/account.vue'));
 const Mobile = defineAsyncComponent(() => import('/@/views/system/login/component/mobile.vue'));
 const Scan = defineAsyncComponent(() => import('/@/views/system/login/component/scan.vue'));
-import _ from "lodash-es";
+import _ from 'lodash-es';
 
 // 定义变量内容
 const storesThemeConfig = useThemeConfig();
@@ -94,22 +75,22 @@ const getThemeConfig = computed(() => {
 	return themeConfig.value;
 });
 
-const systemConfigStore = SystemConfigStore()
-const { systemConfig } = storeToRefs(systemConfigStore)
+const systemConfigStore = SystemConfigStore();
+const { systemConfig } = storeToRefs(systemConfigStore);
 const getSystemConfig = computed(() => {
-	return systemConfig.value
-})
+	return systemConfig.value;
+});
 
 const siteLogo = computed(() => {
 	if (!_.isEmpty(getSystemConfig.value['login.site_logo'])) {
-		return getSystemConfig.value['login.site_logo']
+		return getSystemConfig.value['login.site_logo'];
 	}
-	return logoMini
+	return logoMini;
 });
 
 const siteBg = computed(() => {
 	if (!_.isEmpty(getSystemConfig.value['login.login_background'])) {
-		return getSystemConfig.value['login.login_background']
+		return getSystemConfig.value['login.login_background'];
 	}
 });
 

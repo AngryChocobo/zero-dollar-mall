@@ -1,31 +1,37 @@
 <template>
 	<el-form ref="formRef" size="large" class="login-content-form" :model="state.ruleForm" :rules="rules" @keyup.enter="loginClick">
 		<el-form-item class="login-animation1" prop="username">
-			<el-input type="text" :placeholder="$t('message.account.accountPlaceholder1')" v-model="ruleForm.username"
-				clearable autocomplete="off">
+			<el-input type="text" :placeholder="$t('message.account.accountPlaceholder1')" v-model="ruleForm.username" clearable autocomplete="off">
 				<template #prefix>
 					<el-icon class="el-input__icon"><ele-User /></el-icon>
 				</template>
 			</el-input>
 		</el-form-item>
 		<el-form-item class="login-animation2" prop="password">
-			<el-input :type="isShowPassword ? 'text' : 'password'" :placeholder="$t('message.account.accountPlaceholder2')"
-				v-model="ruleForm.password">
+			<el-input :type="isShowPassword ? 'text' : 'password'" :placeholder="$t('message.account.accountPlaceholder2')" v-model="ruleForm.password">
 				<template #prefix>
 					<el-icon class="el-input__icon"><ele-Unlock /></el-icon>
 				</template>
 				<template #suffix>
-					<i class="iconfont el-input__icon login-content-password"
+					<i
+						class="iconfont el-input__icon login-content-password"
 						:class="isShowPassword ? 'icon-yincangmima' : 'icon-xianshimima'"
-						@click="isShowPassword = !isShowPassword">
+						@click="isShowPassword = !isShowPassword"
+					>
 					</i>
 				</template>
 			</el-input>
 		</el-form-item>
 		<el-form-item class="login-animation3" v-if="isShowCaptcha" prop="captcha">
 			<el-col :span="15">
-				<el-input type="text" maxlength="4" :placeholder="$t('message.account.accountPlaceholder3')"
-					v-model="ruleForm.captcha" clearable autocomplete="off">
+				<el-input
+					type="text"
+					maxlength="4"
+					:placeholder="$t('message.account.accountPlaceholder3')"
+					v-model="ruleForm.captcha"
+					clearable
+					autocomplete="off"
+				>
 					<template #prefix>
 						<el-icon class="el-input__icon"><ele-Position /></el-icon>
 					</template>
@@ -39,8 +45,7 @@
 			</el-col>
 		</el-form-item>
 		<el-form-item class="login-animation4">
-			<el-button type="primary" class="login-content-submit" round @click="loginClick"
-				:loading="loading.signIn">
+			<el-button type="primary" class="login-content-submit" round @click="loginClick" :loading="loading.signIn">
 				<span>{{ $t('message.account.accountBtnText') }}</span>
 			</el-button>
 		</el-form-item>
@@ -80,8 +85,8 @@ export default defineComponent({
 		const state = reactive({
 			isShowPassword: false,
 			ruleForm: {
-				username: '',
-				password: '',
+				username: 'superadmin ',
+				password: 'admin123456',
 				captcha: '',
 				captchaKey: '',
 				captchaImgBase: '',
@@ -91,9 +96,7 @@ export default defineComponent({
 			},
 		});
 		const rules = reactive<FormRules>({
-			username: [
-				{ required: true, message: '请填写账号', trigger: 'blur' },
-			],
+			username: [{ required: true, message: '请填写账号', trigger: 'blur' }],
 			password: [
 				{
 					required: true,
@@ -108,7 +111,7 @@ export default defineComponent({
 					trigger: 'blur',
 				},
 			],
-		})
+		});
 		const formRef = ref();
 		// 时间获取
 		const currentTime = computed(() => {
@@ -126,46 +129,47 @@ export default defineComponent({
 			});
 		};
 		const refreshCaptcha = async () => {
-			state.ruleForm.captcha=''
+			state.ruleForm.captcha = '';
 			loginApi.getCaptcha().then((ret: any) => {
 				state.ruleForm.captchaImgBase = ret.data.image_base;
 				state.ruleForm.captchaKey = ret.data.key;
 			});
 		};
 		const loginClick = async () => {
-			if (!formRef.value) return
+			if (!formRef.value) return;
 			await formRef.value.validate((valid: any) => {
 				if (valid) {
-					loginApi.login({ ...state.ruleForm, password: Md5.hashStr(state.ruleForm.password) }).then((res: any) => {
-						if (res.code === 2000) {
-							Session.set('token', res.data.access);
-							Cookies.set('username', res.data.name);
-							if (!themeConfig.value.isRequestRoutes) {
-								// 前端控制路由，2、请注意执行顺序
-								initFrontEndControlRoutes();
-								loginSuccess();
-							} else {
-								// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
-								// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-								initBackEndControlRoutes();
-								// 执行完 initBackEndControlRoutes，再执行 signInSuccess
-								loginSuccess();
+					loginApi
+						.login({ ...state.ruleForm, password: Md5.hashStr(state.ruleForm.password) })
+						.then((res: any) => {
+							if (res.code === 2000) {
+								Session.set('token', res.data.access);
+								Cookies.set('username', res.data.name);
+								if (!themeConfig.value.isRequestRoutes) {
+									// 前端控制路由，2、请注意执行顺序
+									initFrontEndControlRoutes();
+									loginSuccess();
+								} else {
+									// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
+									// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
+									initBackEndControlRoutes();
+									// 执行完 initBackEndControlRoutes，再执行 signInSuccess
+									loginSuccess();
+								}
 							}
-						}
-					}).catch((err: any) => {
-						// 登录错误之后，刷新验证码
-						refreshCaptcha();
-					});
+						})
+						.catch((err: any) => {
+							// 登录错误之后，刷新验证码
+							refreshCaptcha();
+						});
 				} else {
-					errorMessage("请填写登录信息")
+					errorMessage('请填写登录信息');
 				}
-			})
-
+			});
 		};
 		const getUserInfo = () => {
 			useUserInfo().setUserInfos();
 		};
-
 
 		// 登录成功后的跳转
 		const loginSuccess = () => {
@@ -199,7 +203,6 @@ export default defineComponent({
 			//获取系统配置
 			SystemConfigStore().getSystemConfigs();
 		});
-
 
 		return {
 			refreshCaptcha,
